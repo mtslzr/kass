@@ -27,7 +27,10 @@ fn convert_kelvin(temp: f64) -> f64 {
 }
 
 fn get_weather(zip: String) -> Result<(), reqwest::Error> {
-    let url = format!("https://api.openweathermap.org/data/2.5/weather?zip={},us&APPID=22c1743ea805e4140071bcb33c417e35", zip);
+    let url = format!(
+        "https://api.openweathermap.org/data/2.5/weather?zip={},us&APPID=APIKEY",
+        zip
+    );
     let mut json: OpenWeatherMap = reqwest::get(&url)?.json()?;
     json.main.temp = convert_kelvin(json.main.temp);
     json.main.temp_min = convert_kelvin(json.main.temp_min);
