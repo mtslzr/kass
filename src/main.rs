@@ -1,5 +1,6 @@
 extern crate reqwest;
 use serde::Deserialize;
+use std::env;
 use std::io;
 
 #[derive(Deserialize, Debug)]
@@ -27,11 +28,16 @@ fn convert_kelvin(temp: f64) -> f64 {
 }
 
 fn get_weather(zip: String) -> Result<(), reqwest::Error> {
+    let api_key = env::var("API_KEY");
     let url = format!(
-        "https://api.openweathermap.org/data/2.5/weather?zip={},us&APPID=APIKEY",
-        zip
+        "https://api.openweathermap.org/data/2.5/weather?zip={},us&APPID={}",
+        zip,
+        api_key.unwrap()
     );
-    let mut json: OpenWeatherMap = reqwest::get(&url)?.json()?;
+
+    let mut call = reqwest::get(&url)?;
+    let mut json: OpenWeatherMap = call.json()?;
+
     json.main.temp = convert_kelvin(json.main.temp);
     json.main.temp_min = convert_kelvin(json.main.temp_min);
     json.main.temp_max = convert_kelvin(json.main.temp_max);
